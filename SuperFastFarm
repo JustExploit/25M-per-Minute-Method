@@ -34,7 +34,7 @@ while _G.AutoFarm and task.wait() do
         spawn(function()
             joinCoinRemote:InvokeServer({v,pets})
         end)
-        wait(0.2)
+        wait(_G.Delay)
         spawn(function()
         for i2,v2 in pairs(pets) do
             farmCoinRemote:FireServer({v,v2})

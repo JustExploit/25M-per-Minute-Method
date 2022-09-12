@@ -1,0 +1,45 @@
+local joinCoinRemote = workspace.__THINGS.__REMOTES:FindFirstChild("join coin")
+local farmCoinRemote = workspace.__THINGS.__REMOTES:FindFirstChild("farm coin")
+local getCoinRemote = workspace.__THINGS.__REMOTES:FindFirstChild("get coins")
+
+local pets = {}
+local librarySaveGet = require(game.ReplicatedStorage:WaitForChild("Framework"):WaitForChild("Library")).Save.Get
+local getsmthng = getupvalues(librarySaveGet)
+for i,v in pairs(getsmthng[2][game.Players.LocalPlayer].save.Pets) do
+    if v.e == true then
+        table.insert(pets,v.uid)
+    end
+end
+
+local temporarycoins = {}
+local coins = nil
+local filteredcoins = {}
+spawn(function()
+    while _G.AutoFarm do
+        coins = getCoinRemote:InvokeServer({})[1]
+        for i,v in pairs(coins) do
+            if string.find(v.a, _G.Area) then
+                table.insert(temporarycoins,i)
+            end
+        end
+        filteredcoins = temporarycoins
+        temporarycoins = {}
+        coins = nil
+        wait()
+    end
+end)
+
+while _G.AutoFarm and task.wait() do
+    for i,v in pairs(filteredcoins) do
+        spawn(function()
+            joinCoinRemote:InvokeServer({v,pets})
+        end)
+        wait(0.2)
+        spawn(function()
+        for i2,v2 in pairs(pets) do
+            farmCoinRemote:FireServer({v,v2})
+        end
+        end)
+    end
+end
+end

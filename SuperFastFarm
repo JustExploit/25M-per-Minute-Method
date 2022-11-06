@@ -15,17 +15,16 @@ local temporarycoins = {}
 local coins = nil
 local filteredcoins = {}
 spawn(function()
-    while _G.AutoFarm do
+    while _G.AutoFarm and wait() do
         coins = getCoinRemote:InvokeServer({})[1]
         for i,v in pairs(coins) do
-            if string.find(v.a, _G.Area) then
+            if string.find(v.a, _G.World) then
                 table.insert(temporarycoins,i)
             end
         end
         filteredcoins = temporarycoins
         temporarycoins = {}
         coins = nil
-        wait()
     end
 end)
 
@@ -34,12 +33,11 @@ while _G.AutoFarm and task.wait() do
         spawn(function()
             joinCoinRemote:InvokeServer({v,pets})
         end)
-        wait(_G.Delay)
+        wait(_G.Speed)
         spawn(function()
         for i2,v2 in pairs(pets) do
             farmCoinRemote:FireServer({v,v2})
         end
         end)
     end
-end
 end
